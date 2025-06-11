@@ -28,8 +28,9 @@ def whatsapp():
                 max_tokens=100
             )
             msg.body(gpt_reply.choices[0].message.content.strip())
-        except Exception as e:
-            msg.body("Sorry, I'm having trouble replying right now. Please try again later.")
+except Exception as e:
+    print("OpenAI error:", e)  # Add this line
+    msg.body("Sorry, I'm having trouble replying right now.")
 
     return str(response)
 
