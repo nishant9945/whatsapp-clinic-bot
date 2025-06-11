@@ -4,7 +4,23 @@ from twilio.twiml.messaging_response import MessagingResponse
 import openai
 
 app = Flask(__name__)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# Inside your else block:
+try:
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": incoming}],
+        temperature=0.5,
+        max_tokens=100
+    )
+    msg.body(response.choices[0].message.content.strip())
+except Exception as e:
+    print("OpenAI error:", e)
+    msg.body("Sorry, I'm having trouble replying right now. Please try again later.")
+
 
 @app.route("/whatsapp", methods=["POST"])
 def whatsapp():
