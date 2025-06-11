@@ -12,7 +12,7 @@ def whatsapp():
     response = MessagingResponse()
     msg = response.message()
 
-    # Improved intent matching
+    # Intent matching
     if "book" in incoming or "appointment" in incoming:
         msg.body("Sure! Please share your full name and preferred time for the appointment.")
     elif "queue" in incoming or "wait" in incoming:
@@ -28,13 +28,11 @@ def whatsapp():
                 max_tokens=100
             )
             msg.body(gpt_reply.choices[0].message.content.strip())
-except Exception as e:
-    print("OpenAI error:", e)  # Add this line
-    msg.body("Sorry, I'm having trouble replying right now.")
+        except Exception as e:
+            print("OpenAI error:", e)
+            msg.body("Sorry, I'm having trouble replying right now. Please try again later.")
 
     return str(response)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
-Enhanced intent logic and added ChatGPT fallback
-
