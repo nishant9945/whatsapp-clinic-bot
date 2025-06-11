@@ -12,13 +12,13 @@ def whatsapp():
     response = MessagingResponse()
     msg = response.message()
 
-    # Logic tree
+    # Improved intent matching
     if "book" in incoming or "appointment" in incoming:
-        msg.body("Sure! What's your full name and preferred time?")
+        msg.body("Sure! Please share your full name and preferred time for the appointment.")
     elif "queue" in incoming or "wait" in incoming:
-        msg.body("You're number 3 in line. Estimated wait time: ~20 mins.")
+        msg.body("You are currently number 3 in the queue. Estimated wait time is about 20 minutes.")
     elif "hours" in incoming or "timing" in incoming or "open" in incoming:
-        msg.body("We are open daily from 9 AM to 9:30 PM.")
+        msg.body("Our clinic is open daily from 9 AM to 9:30 PM.")
     else:
         try:
             gpt_reply = openai.ChatCompletion.create(
@@ -29,7 +29,7 @@ def whatsapp():
             )
             msg.body(gpt_reply.choices[0].message.content.strip())
         except Exception as e:
-            msg.body("Sorry, I'm having trouble replying right now.")
+            msg.body("Sorry, I'm having trouble replying right now. Please try again later.")
 
     return str(response)
 
