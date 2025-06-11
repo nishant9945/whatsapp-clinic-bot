@@ -1,26 +1,11 @@
 import os
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
-import openai
-
-app = Flask(__name__)
 from openai import OpenAI
 
+# Set up Flask app and OpenAI client
+app = Flask(__name__)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-# Inside your else block:
-try:
-    response = client.chat.completions.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": incoming}],
-        temperature=0.5,
-        max_tokens=100
-    )
-    msg.body(response.choices[0].message.content.strip())
-except Exception as e:
-    print("OpenAI error:", e)
-    msg.body("Sorry, I'm having trouble replying right now. Please try again later.")
-
 
 @app.route("/whatsapp", methods=["POST"])
 def whatsapp():
@@ -28,7 +13,7 @@ def whatsapp():
     response = MessagingResponse()
     msg = response.message()
 
-    # Intent matching
+    # Intent-based response logic
     if "book" in incoming or "appointment" in incoming:
         msg.body("Sure! Please share your full name and preferred time for the appointment.")
     elif "queue" in incoming or "wait" in incoming:
@@ -36,8 +21,9 @@ def whatsapp():
     elif "hours" in incoming or "timing" in incoming or "open" in incoming:
         msg.body("Our clinic is open daily from 9 AM to 9:30 PM.")
     else:
+        # Fallback to ChatGPT via OpenAI API
         try:
-            gpt_reply = openai.ChatCompletion.create(
+            gpt_reply = client.chat.completions.create(
                 model="gpt-4",
                 messages=[{"role": "user", "content": incoming}],
                 temperature=0.5,
